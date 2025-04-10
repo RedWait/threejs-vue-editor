@@ -1,4 +1,4 @@
-```markdown
+
 # Intoo Editor - 基于Vue和Three.js的3D场景编辑器
 
 ![项目截图](./src/assets/screenShot.png)
@@ -82,5 +82,4 @@ MIT © [RedWait]
 ---
 
 💡 **提示**：项目正在积极开发中，欢迎提交issue和PR！
-```
 
