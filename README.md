@@ -1,9 +1,9 @@
 
-# Intoo Editor - 基于Vue和Three.js的3D场景编辑器
+# Sun Editor - 基于Vue和Three.js的3D场景编辑器
 
 ![项目截图](./src/assets/screenShot.png)
 
-Intoo Editor是一个高度封装的3D场景编辑器，基于Vue 3和Three.js构建，提供直观的拖拽式界面，让您轻松创建和编辑3D场景。
+Sun Editor是一个高度封装的3D场景编辑器，基于Vue 3和Three.js构建，提供直观的拖拽式界面，让您轻松创建和编辑3D场景。
 
 ## ✨ 特性亮点
 
@@ -24,7 +24,7 @@ Intoo Editor是一个高度封装的3D场景编辑器，基于Vue 3和Three.js�
 ### 基本使用
 
 ```javascript
-import IntooEditor from 'intoo-editor'
+import SunEditor from 'sun-editor'
 
 // 在你的Vue组件中
 <template>
