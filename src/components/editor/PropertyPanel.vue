@@ -16,14 +16,14 @@
           <span>{{ selectedObject.type }}</span>
         </div> -->
       </div>
-      
+
       <div class="property-group">
         <h3>位置</h3>
         <div class="property-field">
           <label>X:</label>
           <input
             type="number"
-            v-model.number="position.x"
+            v-model="position.x"
             step="0.1"
             @input="updateObject"
           >
@@ -32,7 +32,7 @@
           <label>Y:</label>
           <input
             type="number"
-            v-model.number="position.y"
+            v-model="position.y"
             step="0.1"
             @input="updateObject"
           >
@@ -41,7 +41,7 @@
           <label>Z:</label>
           <input
             type="number"
-            v-model.number="position.z"
+            v-model="position.z"
             step="0.1"
             @input="updateObject"
           >
@@ -54,7 +54,7 @@
           <label>X:</label>
           <input
             type="number"
-            v-model.number="rotation.x"
+            v-model="rotation.x"
             step="1"
             @input="updateObject"
           >
@@ -63,7 +63,7 @@
           <label>Y:</label>
           <input
             type="number"
-            v-model.number="rotation.y"
+            v-model="rotation.y"
             step="1"
             @input="updateObject"
           >
@@ -72,7 +72,7 @@
           <label>Z:</label>
           <input
             type="number"
-            v-model.number="rotation.z"
+            v-model="rotation.z"
             step="1"
             @input="updateObject"
           >
@@ -85,9 +85,9 @@
           <label>X:</label>
           <input
             type="number"
-            v-model.number="scale.x"
-            step="0.1"
-            min="0.1"
+            v-model="scale.x"
+            step="0.01"
+            min="0.01"
             @input="updateUniformScale"
           >
         </div>
@@ -95,9 +95,9 @@
           <label>Y:</label>
           <input
             type="number"
-            v-model.number="scale.y"
-            step="0.1"
-            min="0.1"
+            v-model="scale.y"
+            step="0.01"
+            min="0.01"
             @input="updateUniformScale"
           >
         </div>
@@ -105,9 +105,9 @@
           <label>Z:</label>
           <input
             type="number"
-            v-model.number="scale.z"
-            step="0.1"
-            min="0.1"
+            v-model="scale.z"
+            step="0.01"
+            min="0.01"
             @input="updateUniformScale"
           >
         </div>
@@ -134,56 +134,49 @@ const props = defineProps({
 const emit = defineEmits(['update-object'])
 
 // 对象名称
-const objectName = computed({
-  get: () => props.selectedObject?.name || '',
-  set: (value) => {}
-})
+const objectName = ref('')
 
-// 使用计算属性来处理位置、旋转和缩放的数据
-const position = computed({
-  get: () => {
-    if (props.selectedObject && props.selectedObject.position) {
-      console.log('属性面板获取位置:', props.selectedObject.position);
-      return props.selectedObject.position;
-    }
-    return { x: 0, y: 0, z: 0 };
-  },
-  set: (value) => {}
-});
+// 使用ref来处理位置、旋转和缩放的数据
+const position = ref({ x: 0, y: 0, z: 0 })
+const rotation = ref({ x: 0, y: 0, z: 0 })
+const scale = ref({ x: 1, y: 1, z: 1 })
 
-const rotation = computed({
-  get: () => {
-    if (props.selectedObject && props.selectedObject.rotation) {
-      console.log('属性面板获取旋转:', props.selectedObject.rotation);
-      return props.selectedObject.rotation;
-    }
-    return { x: 0, y: 0, z: 0 };
-  },
-  set: (value) => {}
-});
-
-const scale = computed({
-  get: () => {
-    if (props.selectedObject && props.selectedObject.scale) {
-      console.log('属性面板获取缩放:', props.selectedObject.scale);
-      return props.selectedObject.scale;
-    }
-    return { x: 1, y: 1, z: 1 };
-  },
-  set: (value) => {}
-});
-
-// 监听selectedObject变化
+// 监听selectedObject变化，同步数据
 watch(() => props.selectedObject, (newValue) => {
   if (newValue) {
-    console.log('属性面板选中对象变化:', newValue);
+    // console.log('属性面板选中对象变化:', newValue);
+    objectName.value = newValue.name || ''
+    
+    if (newValue.position) {
+      position.value = { ...newValue.position }
+    } else {
+      position.value = { x: 0, y: 0, z: 0 }
+    }
+    
+    if (newValue.rotation) {
+      rotation.value = { ...newValue.rotation }
+    } else {
+      rotation.value = { x: 0, y: 0, z: 0 }
+    }
+    
+    if (newValue.scale) {
+      scale.value = { ...newValue.scale }
+    } else {
+      scale.value = { x: 1, y: 1, z: 1 }
+    }
+  } else {
+    // 清空数据
+    objectName.value = ''
+    position.value = { x: 0, y: 0, z: 0 }
+    rotation.value = { x: 0, y: 0, z: 0 }
+    scale.value = { x: 1, y: 1, z: 1 }
   }
-}, { deep: true });
+}, { immediate: true, deep: true });
 
 // 更新对象名称
 const updateObjectName = () => {
   if (!props.selectedObject) return
-  
+
   emit('update-object', {
     name: objectName.value
   })
@@ -192,35 +185,64 @@ const updateObjectName = () => {
 // 统一更新对象属性
 const updateObject = () => {
   if (!props.selectedObject) return
+
+  // 只有当值不为空字符串时才更新
+  const positionData = {}
+  const rotationData = {}
   
+  if (position.value.x !== '' && position.value.x !== null && position.value.x !== undefined) {
+    positionData.x = Number(position.value.x) || 0
+  }
+  if (position.value.y !== '' && position.value.y !== null && position.value.y !== undefined) {
+    positionData.y = Number(position.value.y) || 0
+  }
+  if (position.value.z !== '' && position.value.z !== null && position.value.z !== undefined) {
+    positionData.z = Number(position.value.z) || 0
+  }
+  
+  if (rotation.value.x !== '' && rotation.value.x !== null && rotation.value.x !== undefined) {
+    rotationData.x = Number(rotation.value.x) || 0
+  }
+  if (rotation.value.y !== '' && rotation.value.y !== null && rotation.value.y !== undefined) {
+    rotationData.y = Number(rotation.value.y) || 0
+  }
+  if (rotation.value.z !== '' && rotation.value.z !== null && rotation.value.z !== undefined) {
+    rotationData.z = Number(rotation.value.z) || 0
+  }
+
   emit('update-object', {
-    id: props.selectedObject.id, // 添加对象ID，确保能在Scene中找到对应对象
-    position: {
-      x: Number(position.value.x),
-      y: Number(position.value.y),
-      z: Number(position.value.z)
-    },
-    rotation: {
-      x: Number(rotation.value.x),
-      y: Number(rotation.value.y),
-      z: Number(rotation.value.z)
-    }
+    id: props.selectedObject.id,
+    position: positionData,
+    rotation: rotationData
   })
 }
 
 // 更新统一缩放
 const updateUniformScale = () => {
   if (!props.selectedObject) return
+
+  // 获取当前输入的值，只处理非空值
+  let inputValue = scale.value.x || scale.value.y || scale.value.z
   
-  // 获取当前输入的值
-  const inputValue = Number(scale.value.x || scale.value.y || scale.value.z)
+  // 如果输入为空字符串，不进行更新
+  if (inputValue === '' || inputValue === null || inputValue === undefined) {
+    return
+  }
   
-  // 确保值有效且大于0
-  const newScale = Math.max(0.1, inputValue)
+  // 转换为数字并确保值有效且大于0.01
+  const numValue = Number(inputValue)
+  if (isNaN(numValue)) return
   
+  const newScale = Math.max(0.01, numValue)
+
+  // 同步更新所有缩放值
+  scale.value.x = newScale
+  scale.value.y = newScale
+  scale.value.z = newScale
+
   // 发送更新事件，三个轴使用相同的值
   emit('update-object', {
-    id: props.selectedObject.id, // 添加对象ID，确保能在Scene中找到对应对象
+    id: props.selectedObject.id,
     scale: {
       x: newScale,
       y: newScale,
