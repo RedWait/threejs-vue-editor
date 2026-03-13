@@ -131,10 +131,10 @@ const fetchMaterialsFromAPI = async () => {
       type: 'model',
       preview: 'https://picsum.photos/100',
       defaultProps: {
+        geometryType: 'box',
         width: 1,
         height: 1,
         depth: 1,
-        path: '/models/cube.glb',
         scale: 1
       }
     },
@@ -144,9 +144,10 @@ const fetchMaterialsFromAPI = async () => {
       type: 'model',
       preview: 'https://picsum.photos/101',
       defaultProps: {
+        geometryType: 'sphere',
         radius: 0.5,
-        segments: 32,
-        path: '/models/sphere.glb',
+        widthSegments: 32,
+        heightSegments: 16,
         scale: 1
       }
     },
@@ -156,10 +157,11 @@ const fetchMaterialsFromAPI = async () => {
       type: 'model',
       preview: 'https://picsum.photos/102',
       defaultProps: {
-        radius: 0.5,
+        geometryType: 'cylinder',
+        radiusTop: 0.5,
+        radiusBottom: 0.5,
         height: 1,
-        segments: 32,
-        path: '/models/cylinder.glb',
+        radialSegments: 32,
         scale: 1
       }
     },

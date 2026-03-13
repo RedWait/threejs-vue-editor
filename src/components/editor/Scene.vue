@@ -436,7 +436,7 @@ const createModel = (modelData) => {
     objectData.path = modelData.defaultProps.path
 
     // 处理几何体类型
-    if (modelData.type === 'geometry') {
+    if (modelData.type === 'geometry' || (modelData.type === 'model' && modelData.defaultProps.geometryType)) {
       const props = modelData.defaultProps
       let geometry = null
       const material = new THREE.MeshStandardMaterial({
